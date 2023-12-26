@@ -1,21 +1,25 @@
-import {useNavigation} from '@react-navigation/native';
 import React from 'react';
-import {Button, SafeAreaView, Text} from 'react-native';
+import type {PropsWithChildren} from 'react';
+import {
+    Button,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View
+} from 'react-native';
+
 
 function GameScreen(): React.JSX.Element {
-    const navigation = useNavigation();
-
-    const handleButtonPress = () => {
-        // Navigate to the screen with the name "AnotherScreen"
-        navigation.navigate('TestingScreen');
-    };
-
+    console.log("rendering game")
     return (
         <SafeAreaView>
-            <Button title="Go to Another Screen" onPress={handleButtonPress} />
-            <Text>Some text</Text>
+            <Button title="test" onPress={() => navigation.navigate('Profile', {name: 'Jane'})}></Button>
+            <Text>Testi</Text>
         </SafeAreaView>
-    );
+    )
 }
 
-export default GameScreen;
+export default GameScreen

@@ -1,15 +1,16 @@
 import React from 'react'
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native'
+import {GameEndResult} from './GameScreen.tsx'
 
 interface Props {
-    gameWinner: string | null
+    gameEndResult: GameEndResult | null
     createNewGame: () => void
 }
 
-const GameFooter = ({gameWinner, createNewGame}: Props) => {
+const GameFooter = ({gameEndResult, createNewGame}: Props) => {
     return (
         <>
-            {gameWinner && (
+            {gameEndResult && (
                 <View style={styles.newGameButtonContainer}>
                     <TouchableOpacity onPress={createNewGame}>
                         <Text style={styles.newGameButtonText}>

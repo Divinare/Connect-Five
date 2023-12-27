@@ -1,46 +1,54 @@
-export interface GameEndResult {
-    player: string
-    start: number[]
-    end: number[]
-}
+import {GameEndResult} from './GameScreen.tsx'
 
 export const getGameEndResult = (grid: string[][]): GameEndResult | null => {
-    for (let i = 0; i < grid[0].length; i++) {
-        for (let j = 0; j < grid.length; j++) {
-            const player = getCellContent(i, j, grid)
+    for (let row = 0; row < grid.length; row++) {
+        for (let column = 0; column < grid[0].length; column++) {
+            const player = getCellContent(column, row, grid)
 
             if (player === 'x' || player === 'o') {
-                const result1 = getCountDown(i, j + 1, grid, player, {
+                const result1 = getCountDown(column, row + 1, grid, player, {
                     coordinates: [],
                     count: 1,
                 })
-                const result12 = getCountDownRight(i + 1, j + 1, grid, player, {
-                    coordinates: [],
-                    count: 1,
-                })
-                const result13 = getCountDownLeft(i - 1, j + 1, grid, player, {
-                    coordinates: [],
-                    count: 1,
-                })
+                const result12 = getCountDownRight(
+                    column + 1,
+                    row + 1,
+                    grid,
+                    player,
+                    {
+                        coordinates: [],
+                        count: 1,
+                    },
+                )
+                const result13 = getCountDownLeft(
+                    column - 1,
+                    row + 1,
+                    grid,
+                    player,
+                    {
+                        coordinates: [],
+                        count: 1,
+                    },
+                )
 
                 if (result1.count >= 5) {
                     return {
-                        player,
-                        start: [i, j],
+                        winner: player,
+                        start: [row, column],
                         end: result1.coordinates,
                     }
                 }
                 if (result12.count >= 5) {
                     return {
-                        player,
-                        start: [i, j],
+                        winner: player,
+                        start: [row, column],
                         end: result12.coordinates,
                     }
                 }
                 if (result13.count >= 5) {
                     return {
-                        player,
-                        start: [i, j],
+                        winner: player,
+                        start: [row, column],
                         end: result13.coordinates,
                     }
                 }
@@ -56,15 +64,15 @@ interface CountResult {
 }
 
 const getCountDown = (
-    currentX: number,
-    currentY: number,
+    column: number,
+    row: number,
     grid: string[][],
     player: string,
     result: CountResult,
 ): CountResult => {
-    if (getCellContent(currentX, currentY, grid) === player) {
-        return getCountDown(currentX, currentY + 1, grid, player, {
-            coordinates: [currentX, currentY],
+    if (getCellContent(column, row, grid) === player) {
+        return getCountDown(column, row + 1, grid, player, {
+            coordinates: [row, column],
             count: result.count + 1,
         })
     }
@@ -72,15 +80,15 @@ const getCountDown = (
 }
 
 const getCountDownLeft = (
-    currentX: number,
-    currentY: number,
+    column: number,
+    row: number,
     grid: string[][],
     player: string,
     result: CountResult,
 ): CountResult => {
-    if (getCellContent(currentX, currentY, grid) === player) {
-        return getCountDownLeft(currentX - 1, currentY + 1, grid, player, {
-            coordinates: [currentX, currentY],
+    if (getCellContent(column, row, grid) === player) {
+        return getCountDownLeft(column - 1, row + 1, grid, player, {
+            coordinates: [row, column],
             count: result.count + 1,
         })
     }
@@ -88,15 +96,15 @@ const getCountDownLeft = (
 }
 
 const getCountDownRight = (
-    currentX: number,
-    currentY: number,
+    column: number,
+    row: number,
     grid: string[][],
     player: string,
     result: CountResult,
 ): CountResult => {
-    if (getCellContent(currentX, currentY, grid) === player) {
-        return getCountDownRight(currentX + 1, currentY + 1, grid, player, {
-            coordinates: [currentX, currentY],
+    if (getCellContent(column, row, grid) === player) {
+        return getCountDownRight(column + 1, row + 1, grid, player, {
+            coordinates: [row, column],
             count: result.count + 1,
         })
     }
@@ -104,15 +112,15 @@ const getCountDownRight = (
 }
 
 const getCellContent = (
-    currentX: number,
-    currentY: number,
+    column: number,
+    row: number,
     grid: string[][],
 ): string => {
-    if (currentX > grid[0].length || currentX < 0) {
+    if (column > grid[0].length || column < 0) {
         return ''
     }
-    if (currentY > grid.length || currentY < 0) {
+    if (row > grid.length || row < 0) {
         return ''
     }
-    return grid[currentY][currentX]
+    return grid[row][column]
 }

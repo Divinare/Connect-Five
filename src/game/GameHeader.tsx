@@ -1,15 +1,15 @@
 import {StyleSheet, Text, View} from 'react-native'
-import {player} from './GameScreen.tsx'
+import {GameEndResult, player} from './GameScreen.tsx'
 import React from 'react'
 
 interface Props {
-    gameWinner: string | null
+    gameEndResult: GameEndResult | null
     turn: player
 }
-const GameHeader = ({gameWinner, turn}: Props) => {
+const GameHeader = ({gameEndResult, turn}: Props) => {
     return (
         <View style={styles.headerContainer}>
-            {gameWinner ? (
+            {gameEndResult ? (
                 <>
                     <Text style={styles.headerText}>Peli päättyi,</Text>
                     <Text
@@ -17,7 +17,7 @@ const GameHeader = ({gameWinner, turn}: Props) => {
                             styles.headerText,
                             {color: turn === 'o' ? 'red' : 'blue'},
                         ]}>
-                        {gameWinner}
+                        {gameEndResult.winner}
                     </Text>
                     <Text style={styles.headerText}>voitti!</Text>
                 </>
@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         gap: 10,
+        padding: 10,
     },
     headerText: {
         fontSize: 30,

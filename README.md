@@ -39,6 +39,31 @@ Run the build command
 This command will generate an .apk file in the android/app/build/outputs/apk/debug/app-debug.apk directory.
 
 
+## Build the app for production
+
+Build .aab
+```
+./gradlew bundleRelease
+```
+This command will generate an .aab file in the android/app/build/outputs/bundle/release directory.
+
+Cd into a dir where you put bundletools .jar package
+```
+cd C:\Master Clone\Coding\tools
+```
+
+Build .apks from .aab
+```
+java -jar bundletool-all-1.15.6.jar build-apks --bundle="<project_path>/android/app/build/outputs/bundle/release/app-release.aab" --output="<project_path>/android/app/build/outputs/bundle/release/app-release.apks"
+```
+
+Connect device with a cable (needs usb debugging enabled)
+
+Deploy .apks file to connected device
+```
+java -jar bundletool-all-1.15.6.jar install-apks --apks="<project_path>/android/app/build/outputs/bundle/release/app-release.apks"
+```
+
 ## Run the app on phone
 
 Check name of your device

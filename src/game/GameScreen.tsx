@@ -6,10 +6,10 @@ import GameHeader from './GameHeader.tsx'
 import GameFooter from './GameFooter.tsx'
 import GameGrid from './GameGrid.tsx'
 
-export type player = 'x' | 'o'
+export type Player = 'x' | 'o'
 
 export interface GameEndResult {
-    winner: player
+    winner: Player
     start: number[]
     end: number[]
 }
@@ -30,7 +30,7 @@ const initGame = (): string[][] => {
 
 const GameScreen = (): React.JSX.Element => {
     const [grid, setGrid] = useState<string[][]>(initGame())
-    const [turn, setTurn] = useState<player>('x')
+    const [turn, setTurn] = useState<Player>('x')
     const [gameEndResult, setGameEndResult] = useState<GameEndResult | null>(
         null,
     )

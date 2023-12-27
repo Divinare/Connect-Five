@@ -1,126 +1,76 @@
-import {GameEndResult} from './GameScreen.tsx'
+import {GameEndResult, Player} from './GameScreen.tsx'
+
+const hasWinningStreak = (slice: string[]): boolean => {
+    return (
+        slice.every(cell => cell === 'x') || slice.every(cell => cell === 'o')
+    )
+}
 
 export const getGameEndResult = (grid: string[][]): GameEndResult | null => {
-    for (let row = 0; row < grid.length; row++) {
-        for (let column = 0; column < grid[0].length; column++) {
-            const player = getCellContent(column, row, grid)
+    const rows = grid.length
+    const columns = grid[0].length
 
-            if (player === 'x' || player === 'o') {
-                const result1 = getCountDown(column, row + 1, grid, player, {
-                    coordinates: [],
-                    count: 1,
-                })
-                const result12 = getCountDownRight(
-                    column + 1,
-                    row + 1,
-                    grid,
-                    player,
-                    {
-                        coordinates: [],
-                        count: 1,
-                    },
-                )
-                const result13 = getCountDownLeft(
-                    column - 1,
-                    row + 1,
-                    grid,
-                    player,
-                    {
-                        coordinates: [],
-                        count: 1,
-                    },
-                )
-
-                if (result1.count >= 5) {
-                    return {
-                        winner: player,
-                        start: [row, column],
-                        end: result1.coordinates,
-                    }
-                }
-                if (result12.count >= 5) {
-                    return {
-                        winner: player,
-                        start: [row, column],
-                        end: result12.coordinates,
-                    }
-                }
-                if (result13.count >= 5) {
-                    return {
-                        winner: player,
-                        start: [row, column],
-                        end: result13.coordinates,
-                    }
+    // Check rows
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col <= columns - 5; col++) {
+            const slice = grid[row].slice(col, col + 5)
+            if (hasWinningStreak(slice)) {
+                return {
+                    winner: slice[0] as Player,
+                    start: [row, col],
+                    end: [row, col + 4],
                 }
             }
         }
     }
+
+    // Check columns
+    for (let col = 0; col < columns; col++) {
+        for (let row = 0; row <= rows - 5; row++) {
+            const slice = Array.from({length: 5}, (_, i) => grid[row + i][col])
+            if (hasWinningStreak(slice)) {
+                return {
+                    winner: slice[0] as Player,
+                    start: [row, col],
+                    end: [row + 4, col],
+                }
+            }
+        }
+    }
+
+    // Check diagonals
+    for (let row = 0; row <= rows - 5; row++) {
+        for (let col = 0; col <= columns - 5; col++) {
+            const slice = Array.from(
+                {length: 5},
+                (_, i) => grid[row + i][col + i],
+            )
+            if (hasWinningStreak(slice)) {
+                return {
+                    winner: slice[0] as Player,
+                    start: [row, col],
+                    end: [row + 4, col + 4],
+                }
+            }
+        }
+    }
+
+    // Check diagonals
+    for (let row = 0; row <= rows - 5; row++) {
+        for (let col = columns - 1; col >= 4; col--) {
+            const slice = Array.from(
+                {length: 5},
+                (_, i) => grid[row + i][col - i],
+            )
+            if (hasWinningStreak(slice)) {
+                return {
+                    winner: slice[0] as Player,
+                    start: [row, col],
+                    end: [row + 4, col - 4],
+                }
+            }
+        }
+    }
+
     return null
-}
-
-interface CountResult {
-    count: number
-    coordinates: number[]
-}
-
-const getCountDown = (
-    column: number,
-    row: number,
-    grid: string[][],
-    player: string,
-    result: CountResult,
-): CountResult => {
-    if (getCellContent(column, row, grid) === player) {
-        return getCountDown(column, row + 1, grid, player, {
-            coordinates: [row, column],
-            count: result.count + 1,
-        })
-    }
-    return result
-}
-
-const getCountDownLeft = (
-    column: number,
-    row: number,
-    grid: string[][],
-    player: string,
-    result: CountResult,
-): CountResult => {
-    if (getCellContent(column, row, grid) === player) {
-        return getCountDownLeft(column - 1, row + 1, grid, player, {
-            coordinates: [row, column],
-            count: result.count + 1,
-        })
-    }
-    return result
-}
-
-const getCountDownRight = (
-    column: number,
-    row: number,
-    grid: string[][],
-    player: string,
-    result: CountResult,
-): CountResult => {
-    if (getCellContent(column, row, grid) === player) {
-        return getCountDownRight(column + 1, row + 1, grid, player, {
-            coordinates: [row, column],
-            count: result.count + 1,
-        })
-    }
-    return result
-}
-
-const getCellContent = (
-    column: number,
-    row: number,
-    grid: string[][],
-): string => {
-    if (column > grid[0].length || column < 0) {
-        return ''
-    }
-    if (row > grid.length || row < 0) {
-        return ''
-    }
-    return grid[row][column]
 }

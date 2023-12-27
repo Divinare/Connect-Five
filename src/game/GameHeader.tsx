@@ -1,10 +1,10 @@
 import {StyleSheet, Text, View} from 'react-native'
-import {GameEndResult, player} from './GameScreen.tsx'
+import {GameEndResult, Player} from './GameScreen.tsx'
 import React from 'react'
 
 interface Props {
     gameEndResult: GameEndResult | null
-    turn: player
+    turn: Player
 }
 const GameHeader = ({gameEndResult, turn}: Props) => {
     return (

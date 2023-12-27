@@ -89,6 +89,14 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            if (project.hasProperty('TICTACTOE_RELEASE_STORE_FILE')) {
+                storeFile file(TICTACTOE_RELEASE_STORE_FILE)
+                storePassword TICTACTOE_RELEASE_STORE_PASSWORD
+                keyAlias TICTACTOE_RELEASE_KEY_ALIAS
+                keyPassword TICTACTOE_RELEASE_KEY_PASSWORD
+            }
+        }
     }
     buildTypes {
         debug {

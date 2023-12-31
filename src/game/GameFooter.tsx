@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     },
     newGameButtonText: {
         color: '#1abc9c',
-        fontSize: 30,
+        fontSize: 20,
         borderWidth: 2,
         borderColor: '#16a085',
         textAlign: 'center',

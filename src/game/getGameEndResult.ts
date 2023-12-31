@@ -1,14 +1,26 @@
 import {GameEndResult} from './types/GameEndResult.ts'
 import {GameState} from './types/GameState.ts'
 import {Player} from './GameScreen.tsx'
+import {useEffect, useState} from 'react'
 
 /**
  *
  * The idea here is to check for 5+ matches in every direction from the lastly played move. This should be the most optimal solution.
  */
-export const getGameEndResult = (
-    gameState: GameState,
-): GameEndResult | null => {
+
+export const useGameResult = (gameState: GameState) => {
+    const [gameEndResult, setGameEndResult] = useState<GameEndResult | null>(
+        null,
+    )
+
+    useEffect(() => {
+        const result = getGameEndResult(gameState)
+        setGameEndResult(result)
+    }, [gameState])
+
+    return gameEndResult
+}
+const getGameEndResult = (gameState: GameState): GameEndResult | null => {
     const {grid, lastMove} = gameState
     if (!lastMove) {
         return null

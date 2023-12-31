@@ -192,5 +192,10 @@ const isOutsideGrid = (
     rowIndex: number,
     columnIndex: number,
 ): boolean => {
-    return rowIndex >= grid.length || columnIndex >= grid[rowIndex].length
+    return (
+        rowIndex < 0 ||
+        columnIndex < 0 ||
+        rowIndex >= grid.length ||
+        columnIndex >= grid[rowIndex].length
+    )
 }

@@ -1,6 +1,7 @@
 import React from 'react'
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native'
-import {GameEndResult} from './GameScreen.tsx'
+
+import {GameEndResult} from './types/GameEndResult.ts'
 
 interface Props {
     gameEndResult: GameEndResult | null

@@ -1,5 +1,7 @@
 import {Dimensions} from 'react-native'
 
+// TODO: refactor numbers here by using % (remainder)
+
 const ROWS = 20
 const COLUMNS = 12
 const SCREEN_WIDTH = Dimensions.get('window').width

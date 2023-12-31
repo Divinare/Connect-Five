@@ -16,7 +16,8 @@ import {
     GAME_WIDTH,
     ROWS,
 } from './constants.ts'
-import {GameEndResult} from './GameScreen.tsx'
+
+import {GameEndResult} from './types/GameEndResult.ts'
 
 interface Props {
     grid: string[][]
@@ -62,10 +63,10 @@ const GameGrid: React.FC<Props> = ({
         drawGrid()
 
         if (gameEndResult) {
-            const startRow = gameEndResult.start[0]
-            const startColumn = gameEndResult.start[1]
-            const endRow = gameEndResult.end[0]
-            const endColumn = gameEndResult.end[1]
+            const startRow = gameEndResult.start.y
+            const startColumn = gameEndResult.start.x
+            const endRow = gameEndResult.end.y
+            const endColumn = gameEndResult.end.x
 
             const HALF_CELL_WIDTH = Math.floor(CELL_WIDTH / 2)
 

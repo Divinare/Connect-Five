@@ -1,76 +1,184 @@
-import {GameEndResult, Player} from './GameScreen.tsx'
+import {GameEndResult} from './types/GameEndResult.ts'
+import {GameState} from './types/GameState.ts'
+import {Player} from './GameScreen.tsx'
 
-const hasWinningStreak = (slice: string[]): boolean => {
-    return (
-        slice.every(cell => cell === 'x') || slice.every(cell => cell === 'o')
+/**
+ *
+ * The idea here is to check for 5+ matches in every direction from the lastly played move. This should be the most optimal solution.
+ */
+export const getGameEndResult = (
+    gameState: GameState,
+): GameEndResult | null => {
+    const {grid, lastMove} = gameState
+    if (!lastMove) {
+        return null
+    }
+
+    const left = getCount(
+        grid,
+        lastMove.player,
+        lastMove.coordinates.y,
+        lastMove.coordinates.x,
+        0,
+        -1,
+        0,
     )
-}
-
-export const getGameEndResult = (grid: string[][]): GameEndResult | null => {
-    const rows = grid.length
-    const columns = grid[0].length
-
-    // Check rows
-    for (let row = 0; row < rows; row++) {
-        for (let col = 0; col <= columns - 5; col++) {
-            const slice = grid[row].slice(col, col + 5)
-            if (hasWinningStreak(slice)) {
-                return {
-                    winner: slice[0] as Player,
-                    start: [row, col],
-                    end: [row, col + 4],
-                }
-            }
+    const right = getCount(
+        grid,
+        lastMove.player,
+        lastMove.coordinates.y,
+        lastMove.coordinates.x,
+        0,
+        1,
+        0,
+    )
+    if (left + right >= 4) {
+        return {
+            winner: lastMove.player,
+            start: {
+                x: lastMove.coordinates.x - left,
+                y: lastMove.coordinates.y,
+            },
+            end: {
+                x: lastMove.coordinates.x + right,
+                y: lastMove.coordinates.y,
+            },
         }
     }
 
-    // Check columns
-    for (let col = 0; col < columns; col++) {
-        for (let row = 0; row <= rows - 5; row++) {
-            const slice = Array.from({length: 5}, (_, i) => grid[row + i][col])
-            if (hasWinningStreak(slice)) {
-                return {
-                    winner: slice[0] as Player,
-                    start: [row, col],
-                    end: [row + 4, col],
-                }
-            }
+    const top = getCount(
+        grid,
+        lastMove.player,
+        lastMove.coordinates.y,
+        lastMove.coordinates.x,
+        -1,
+        0,
+        0,
+    )
+    const down = getCount(
+        grid,
+        lastMove.player,
+        lastMove.coordinates.y,
+        lastMove.coordinates.x,
+        1,
+        0,
+        0,
+    )
+    if (top + down >= 4) {
+        return {
+            winner: lastMove.player,
+            start: {
+                x: lastMove.coordinates.x,
+                y: lastMove.coordinates.y - top,
+            },
+            end: {
+                x: lastMove.coordinates.x,
+                y: lastMove.coordinates.y + down,
+            },
         }
     }
 
-    // Check diagonals
-    for (let row = 0; row <= rows - 5; row++) {
-        for (let col = 0; col <= columns - 5; col++) {
-            const slice = Array.from(
-                {length: 5},
-                (_, i) => grid[row + i][col + i],
-            )
-            if (hasWinningStreak(slice)) {
-                return {
-                    winner: slice[0] as Player,
-                    start: [row, col],
-                    end: [row + 4, col + 4],
-                }
-            }
+    const topLeft = getCount(
+        grid,
+        lastMove.player,
+        lastMove.coordinates.y,
+        lastMove.coordinates.x,
+        -1,
+        -1,
+        0,
+    )
+    const bottomRight = getCount(
+        grid,
+        lastMove.player,
+        lastMove.coordinates.y,
+        lastMove.coordinates.x,
+        1,
+        1,
+        0,
+    )
+
+    if (topLeft + bottomRight >= 4) {
+        return {
+            winner: lastMove.player,
+            start: {
+                x: lastMove.coordinates.x - topLeft,
+                y: lastMove.coordinates.y - topLeft,
+            },
+            end: {
+                x: lastMove.coordinates.x + bottomRight,
+                y: lastMove.coordinates.y + bottomRight,
+            },
         }
     }
 
-    // Check diagonals
-    for (let row = 0; row <= rows - 5; row++) {
-        for (let col = columns - 1; col >= 4; col--) {
-            const slice = Array.from(
-                {length: 5},
-                (_, i) => grid[row + i][col - i],
-            )
-            if (hasWinningStreak(slice)) {
-                return {
-                    winner: slice[0] as Player,
-                    start: [row, col],
-                    end: [row + 4, col - 4],
-                }
-            }
+    const topRight = getCount(
+        grid,
+        lastMove.player,
+        lastMove.coordinates.y,
+        lastMove.coordinates.x,
+        -1,
+        1,
+        0,
+    )
+    const bottomLeft = getCount(
+        grid,
+        lastMove.player,
+        lastMove.coordinates.y,
+        lastMove.coordinates.x,
+        1,
+        -1,
+        0,
+    )
+
+    if (topRight + bottomLeft >= 4) {
+        return {
+            winner: lastMove.player,
+            start: {
+                x: lastMove.coordinates.x + topRight,
+                y: lastMove.coordinates.y - topRight,
+            },
+            end: {
+                x: lastMove.coordinates.x - bottomLeft,
+                y: lastMove.coordinates.y + bottomLeft,
+            },
         }
     }
 
     return null
+}
+
+const getCount = (
+    grid: string[][],
+    turn: Player,
+    row: number,
+    column: number,
+    nextRow: number,
+    nextColumn: number,
+    count: number,
+): number => {
+    const currentRow = row + nextRow
+    const currentColumn = column + nextColumn
+    if (isOutsideGrid(grid, currentRow, currentColumn)) {
+        return count
+    }
+    if (grid[currentRow][currentColumn] !== turn) {
+        return count
+    }
+    return getCount(
+        grid,
+        turn,
+        currentRow,
+        currentColumn,
+        nextRow,
+        nextColumn,
+        count + 1,
+    )
+}
+
+const isOutsideGrid = (
+    grid: string[][],
+    rowIndex: number,
+    columnIndex: number,
+): boolean => {
+    return rowIndex >= grid.length || columnIndex >= grid[rowIndex].length
 }

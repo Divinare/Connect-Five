@@ -1,10 +1,10 @@
-import * as React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import GameScreen from './game/GameScreen.tsx';
-import TestingScreen from './TestingScreen';
+import * as React from 'react'
+import {NavigationContainer} from '@react-navigation/native'
+import {createNativeStackNavigator} from '@react-navigation/native-stack'
+import GameScreen from './game/GameScreen.tsx'
+import TestingScreen from './TestingScreen'
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator()
 
 function App(): React.JSX.Element {
     return (
@@ -22,7 +22,7 @@ function App(): React.JSX.Element {
                 />
             </Stack.Navigator>
         </NavigationContainer>
-    );
+    )
 }
 
-export default App;
+export default App

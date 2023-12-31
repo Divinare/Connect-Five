@@ -1,6 +1,7 @@
 import {StyleSheet, Text, View} from 'react-native'
-import {GameEndResult, Player} from './GameScreen.tsx'
+import {Player} from './GameScreen.tsx'
 import React from 'react'
+import {GameEndResult} from './types/GameEndResult.ts'
 
 interface Props {
     gameEndResult: GameEndResult | null

@@ -71,13 +71,11 @@ const GameGrid: React.FC<Props> = ({
 
             const HALF_CELL_WIDTH = Math.floor(CELL_WIDTH / 2)
 
-            const startX =
-                startColumn * CELL_WIDTH + startColumn + HALF_CELL_WIDTH
-            const startY =
-                startRow * CELL_WIDTH - startRow / 2 + HALF_CELL_WIDTH
+            const startX = startColumn * CELL_WIDTH + HALF_CELL_WIDTH
+            const startY = startRow * CELL_WIDTH + HALF_CELL_WIDTH
 
-            const endX = endColumn * CELL_WIDTH + endColumn + HALF_CELL_WIDTH
-            const endY = endRow * CELL_WIDTH - endRow / 2 + HALF_CELL_WIDTH
+            const endX = endColumn * CELL_WIDTH + HALF_CELL_WIDTH
+            const endY = endRow * CELL_WIDTH + HALF_CELL_WIDTH
 
             context.beginPath()
             context.moveTo(startX, startY)
@@ -163,10 +161,11 @@ const styles = StyleSheet.create({
     },
     cell: {
         display: 'flex',
-        fontSize: 20,
         backgroundColor: 'transparent',
-        //backgroundColor: 'white',
         textAlign: 'center',
+        textAlignVertical: 'center',
+        fontSize: Math.ceil(CELL_WIDTH * 0.75),
+        lineHeight: CELL_WIDTH - 4,
     },
 })
 

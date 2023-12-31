@@ -1,14 +1,13 @@
 import {Dimensions} from 'react-native'
 
-// TODO: refactor numbers here by using % (remainder)
-
-const ROWS = 20
-const COLUMNS = 12
+const ROWS = 22
+const COLUMNS = 14
 const SCREEN_WIDTH = Dimensions.get('window').width
-const GAME_PADDING = 5
-const GAME_WIDTH = Math.floor(SCREEN_WIDTH - GAME_PADDING * 2 + 1)
-const CELL_WIDTH = Math.floor(GAME_WIDTH / COLUMNS)
-const GAME_HEIGHT = Math.floor(CELL_WIDTH * ROWS - GAME_PADDING * 2 + 1)
+// We want game width to be evenly divided by the number of columns
+const GAME_WIDTH = SCREEN_WIDTH - (SCREEN_WIDTH % COLUMNS)
+const GAME_PADDING = Math.floor((SCREEN_WIDTH - GAME_WIDTH) / 2)
+const CELL_WIDTH = GAME_WIDTH / COLUMNS
+const GAME_HEIGHT = CELL_WIDTH * ROWS
 const EMPTY_CELL = ''
 
 export {

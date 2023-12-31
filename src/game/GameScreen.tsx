@@ -6,6 +6,7 @@ import GameHeader from './GameHeader.tsx'
 import GameFooter from './GameFooter.tsx'
 import GameGrid from './GameGrid.tsx'
 import {GameState} from './types/GameState.ts'
+import {Move} from './types/Move.ts'
 
 export type Player = 'x' | 'o'
 
@@ -24,6 +25,7 @@ const initGame = (): string[][] => {
 }
 
 const GameScreen = (): React.JSX.Element => {
+    const [moveHistory, setMoveHistory] = useState<Move[]>([])
     const initialGameState: GameState = {
         grid: initGame(),
         currentTurn: 'x',
@@ -39,23 +41,43 @@ const GameScreen = (): React.JSX.Element => {
             const newGrid = gameState.grid.map(row => [...row])
             newGrid[rowIndex][columnIndex] = gameState.currentTurn
 
-            const currentTurn = gameState.currentTurn === 'x' ? 'o' : 'x'
+            const currentTurn: Player =
+                gameState.currentTurn === 'x' ? 'o' : 'x'
+            const currentMove: Move = {
+                player: gameState.currentTurn,
+                coordinates: {
+                    x: columnIndex,
+                    y: rowIndex,
+                },
+            }
             setGameState({
                 grid: newGrid,
                 currentTurn,
-                lastMove: {
-                    player: gameState.currentTurn,
-                    coordinates: {
-                        x: columnIndex,
-                        y: rowIndex,
-                    },
-                },
+                lastMove: currentMove,
             })
+            setMoveHistory(prevMoveHistory => [...prevMoveHistory, currentMove])
         }
     }
 
     const createNewGame = () => {
         setGameState(initialGameState)
+    }
+
+    const undoMove = () => {
+        if (moveHistory.length > 0) {
+            const previousMove = moveHistory[moveHistory.length - 1]
+
+            const newGrid = gameState.grid
+            newGrid[previousMove.coordinates.y][previousMove.coordinates.x] = ''
+            // Update the state with the previous state
+            setGameState({
+                grid: newGrid,
+                lastMove: previousMove,
+                currentTurn: previousMove.player,
+            })
+
+            setMoveHistory(prevMoveHistory => prevMoveHistory.slice(0, -1))
+        }
     }
 
     return (
@@ -69,7 +91,8 @@ const GameScreen = (): React.JSX.Element => {
                 gameEndResult={gameEndResult}></GameGrid>
             <GameFooter
                 gameEndResult={gameEndResult}
-                createNewGame={createNewGame}></GameFooter>
+                createNewGame={createNewGame}
+                undoMove={undoMove}></GameFooter>
         </SafeAreaView>
     )
 }

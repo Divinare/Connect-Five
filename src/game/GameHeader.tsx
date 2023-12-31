@@ -2,6 +2,7 @@ import {StyleSheet, Text, View} from 'react-native'
 import {Player} from './GameScreen.tsx'
 import React from 'react'
 import {GameEndResult} from './types/GameEndResult.ts'
+import {colors} from '../colors.ts'
 
 interface Props {
     gameEndResult: GameEndResult | null
@@ -16,7 +17,12 @@ const GameHeader = ({gameEndResult, turn}: Props) => {
                     <Text
                         style={[
                             styles.headerText,
-                            {color: turn === 'o' ? 'red' : 'blue'},
+                            {
+                                color:
+                                    turn === 'o'
+                                        ? colors.playerX
+                                        : colors.playerO,
+                            },
                         ]}>
                         {gameEndResult.winner}
                     </Text>
@@ -28,7 +34,12 @@ const GameHeader = ({gameEndResult, turn}: Props) => {
                     <Text
                         style={[
                             styles.headerText,
-                            {color: turn === 'o' ? 'blue' : 'red'},
+                            {
+                                color:
+                                    turn === 'o'
+                                        ? colors.playerO
+                                        : colors.playerX,
+                            },
                         ]}>
                         {turn}
                     </Text>
@@ -43,29 +54,13 @@ const styles = StyleSheet.create({
     headerContainer: {
         display: 'flex',
         flexDirection: 'row',
+        justifyContent: 'center',
         gap: 10,
         padding: 10,
     },
     headerText: {
         fontSize: 30,
-        color: 'black',
-    },
-    buttonContainer: {
-        margin: 0,
-        padding: 0,
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        alignContent: 'center',
-        borderWidth: 1,
-        borderColor: 'black',
-        borderRadius: 0,
-    },
-    buttonContent: {
-        display: 'flex',
-        color: 'blue',
-        fontSize: 20,
-        textAlign: 'center',
+        color: colors.text,
     },
 })
 

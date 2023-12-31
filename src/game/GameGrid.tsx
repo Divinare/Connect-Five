@@ -18,6 +18,7 @@ import {
 } from './constants.ts'
 
 import {GameEndResult} from './types/GameEndResult.ts'
+import {colors} from '../colors.ts'
 
 interface Props {
     grid: string[][]
@@ -81,7 +82,8 @@ const GameGrid: React.FC<Props> = ({
             context.beginPath()
             context.moveTo(startX, startY)
             context.lineTo(endX, endY)
-            context.strokeStyle = gameEndResult.winner === 'x' ? 'red' : 'blue'
+            context.strokeStyle =
+                gameEndResult.winner === 'x' ? colors.playerX : colors.playerO
             context.lineWidth = 2
             context.stroke()
         }
@@ -106,7 +108,10 @@ const GameGrid: React.FC<Props> = ({
                             style={[
                                 styles.cell,
                                 {
-                                    color: cellContent === 'o' ? 'blue' : 'red',
+                                    color:
+                                        cellContent === 'o'
+                                            ? colors.playerO
+                                            : colors.playerX,
                                 },
                             ]}>
                             {cellContent}
@@ -143,7 +148,7 @@ const GameGrid: React.FC<Props> = ({
                 style={{
                     width: GAME_WIDTH,
                     height: GAME_HEIGHT,
-                    backgroundColor: 'white',
+                    backgroundColor: colors.gameBackground,
                 }}
             />
             {renderTouchableCells()}
@@ -158,8 +163,9 @@ const styles = StyleSheet.create({
     },
     cell: {
         display: 'flex',
-        color: 'blue',
         fontSize: 20,
+        backgroundColor: 'transparent',
+        //backgroundColor: 'white',
         textAlign: 'center',
     },
 })

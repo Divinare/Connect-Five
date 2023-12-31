@@ -28,17 +28,19 @@ const styles = StyleSheet.create({
     newGameButtonContainer: {
         display: 'flex',
         flexDirection: 'row',
-        alignItems: 'center',
-        gap: 10,
-        padding: 5,
+        justifyContent: 'center',
+        marginTop: 10,
         width: '100%',
     },
     newGameButtonText: {
-        color: 'black',
-        fontSize: 20,
-        borderWidth: 1,
-        borderColor: 'black',
-        padding: 5,
+        color: '#1abc9c',
+        fontSize: 30,
+        borderWidth: 2,
+        borderColor: '#16a085',
+        textAlign: 'center',
+        alignContent: 'center',
+        textAlignVertical: 'center',
+        padding: 10,
     },
 })
 

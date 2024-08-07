@@ -3,6 +3,7 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native'
 
 import {GameEndResult} from './types/GameEndResult.ts'
 import UndoSvg from '../icons/undo.tsx'
+import {colors} from '../colors.ts'
 
 interface Props {
     gameEndResult: GameEndResult | null
@@ -42,6 +43,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginTop: 10,
         width: '100%',
+        backgroundColor: colors.appBackground,
     },
     newGameButtonText: {
         color: '#1abc9c',

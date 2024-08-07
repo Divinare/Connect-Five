@@ -1,4 +1,4 @@
-import {SafeAreaView} from 'react-native'
+import {SafeAreaView, StyleSheet} from 'react-native'
 import React, {useState} from 'react'
 import {useGameResult} from './getGameEndResult.ts'
 import {COLUMNS, EMPTY_CELL, ROWS} from './constants.ts'
@@ -7,15 +7,16 @@ import GameFooter from './GameFooter.tsx'
 import GameGrid from './GameGrid.tsx'
 import {GameState} from './types/GameState.ts'
 import {Move} from './types/Move.ts'
+import {colors} from '../colors.ts'
 
 export type Player = 'x' | 'o'
 
 const initGame = (): string[][] => {
     const grid: string[][] = []
 
-    for (let row = 0; row < ROWS; row++) {
+    for (let i = 0; i < ROWS; i++) {
         const row: string[] = []
-        for (let column = 0; column < COLUMNS; column++) {
+        for (let j = 0; j < COLUMNS; j++) {
             row.push(EMPTY_CELL)
         }
         grid.push(row)
@@ -81,7 +82,7 @@ const GameScreen = (): React.JSX.Element => {
     }
 
     return (
-        <SafeAreaView>
+        <SafeAreaView style={styles.gameScreenContainer}>
             <GameHeader
                 gameEndResult={gameEndResult}
                 turn={gameState.currentTurn}></GameHeader>
@@ -96,5 +97,13 @@ const GameScreen = (): React.JSX.Element => {
         </SafeAreaView>
     )
 }
+
+const styles = StyleSheet.create({
+    gameScreenContainer: {
+        display: 'flex',
+        height: '100%',
+        backgroundColor: colors.appBackground,
+    },
+})
 
 export default GameScreen

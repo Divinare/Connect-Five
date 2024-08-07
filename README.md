@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-Install React Native dependencies on your machine: https://reactnative.dev/docs/environment-setup
+Install React Native dependencies on your machine, check docs from: https://reactnative.dev/docs/environment-setup
 
 ## Start the project
 

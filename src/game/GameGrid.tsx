@@ -1,24 +1,24 @@
-import React, {useEffect, useRef} from 'react'
+import React from 'react'
+
+import {GameEndResult} from './types/GameEndResult.ts'
 import {
-    DimensionValue,
-    StyleSheet,
-    Text,
-    TouchableHighlight,
-    View,
-    ViewStyle,
-} from 'react-native'
-import Canvas from 'react-native-canvas'
+    Gesture,
+    GestureDetector,
+    GestureHandlerRootView,
+} from 'react-native-gesture-handler'
+import Animated, {
+    useAnimatedStyle,
+    useSharedValue,
+} from 'react-native-reanimated'
 import {
+    CELL_HEIGHT,
     CELL_WIDTH,
     COLUMNS,
     GAME_HEIGHT,
-    GAME_PADDING,
     GAME_WIDTH,
     ROWS,
 } from './constants.ts'
-
-import {GameEndResult} from './types/GameEndResult.ts'
-import {colors} from '../colors.ts'
+import {Pressable, StyleSheet, Text} from 'react-native'
 
 interface Props {
     grid: string[][]
@@ -26,146 +26,108 @@ interface Props {
     gameEndResult: GameEndResult | null
 }
 
-const GameGrid: React.FC<Props> = ({
-    grid,
-    onCellClick,
-    gameEndResult,
-}: Props) => {
-    const canvasRef = useRef<Canvas>(null)
+const GameGrid: React.FC<Props> = ({grid, onCellClick}: Props) => {
+    const scale = useSharedValue(1)
+    const translateX = useSharedValue(0)
+    const translateY = useSharedValue(0)
+    const lastTranslateX = useSharedValue(0)
+    const lastTranslateY = useSharedValue(0)
+    const lastScale = useSharedValue(1)
 
-    useEffect(() => {
-        const canvas = canvasRef.current!
-        canvas.width = GAME_WIDTH
-        canvas.height = GAME_HEIGHT
-        const context = canvas.getContext('2d')!
-        const width = GAME_WIDTH
-        const height = GAME_HEIGHT
+    const panGesture = Gesture.Pan()
+        .onUpdate(event => {
+            translateX.value = lastTranslateX.value + event.translationX
+            translateY.value = lastTranslateY.value + event.translationY
+        })
+        .onEnd(() => {
+            lastTranslateX.value = translateX.value
+            lastTranslateY.value = translateY.value
+        })
 
-        const drawGrid = () => {
-            const cellWidth = width / COLUMNS
-            const cellHeight = height / ROWS
+    const pinchGesture = Gesture.Pinch()
+        .onUpdate(event => {
+            scale.value = lastScale.value * event.scale
+        })
+        .onEnd(() => {
+            lastScale.value = scale.value
+        })
 
-            for (let i = 0; i <= ROWS; i++) {
-                const y = i * cellHeight
-                context.moveTo(0, y)
-                context.lineTo(width, y)
-            }
-
-            for (let i = 0; i <= COLUMNS; i++) {
-                const x = i * cellWidth
-                context.moveTo(x, 0)
-                context.lineTo(x, height)
-            }
-
-            context.strokeStyle = 'black'
-            context.stroke()
+    const animatedStyle = useAnimatedStyle(() => {
+        return {
+            transform: [
+                {translateX: translateX.value},
+                {translateY: translateY.value},
+                {scale: scale.value},
+            ],
         }
+    })
 
-        drawGrid()
-
-        if (gameEndResult) {
-            const startRow = gameEndResult.start.y
-            const startColumn = gameEndResult.start.x
-            const endRow = gameEndResult.end.y
-            const endColumn = gameEndResult.end.x
-
-            const HALF_CELL_WIDTH = Math.floor(CELL_WIDTH / 2)
-
-            const startX = startColumn * CELL_WIDTH + HALF_CELL_WIDTH
-            const startY = startRow * CELL_WIDTH + HALF_CELL_WIDTH
-
-            const endX = endColumn * CELL_WIDTH + HALF_CELL_WIDTH
-            const endY = endRow * CELL_WIDTH + HALF_CELL_WIDTH
-
-            context.beginPath()
-            context.moveTo(startX, startY)
-            context.lineTo(endX, endY)
-            context.strokeStyle =
-                gameEndResult.winner === 'x' ? colors.playerX : colors.playerO
-            context.lineWidth = 2
-            context.stroke()
-        }
-    }, [gameEndResult])
-
-    const handleCellClick = (row: number, column: number) => {
-        onCellClick(column, row)
-    }
-
-    const renderTouchableCells = (): React.ReactNode[] => {
-        const touchableCells: React.ReactNode[] = []
+    const renderCells = () => {
+        const cells = []
         for (let row = 0; row < ROWS; row++) {
             for (let column = 0; column < COLUMNS; column++) {
-                const cellContent = grid[row][column]
-                touchableCells.push(
-                    <TouchableHighlight
-                        key={`${row}-${column}`}
-                        style={getCellStyle(row, column, ROWS, COLUMNS)}
-                        onPress={() => handleCellClick(row, column)}
-                        underlayColor="transparent">
-                        <Text
-                            style={[
-                                styles.cell,
-                                {
+                cells.push(
+                    <Animated.View key={`${row}-${column}`}>
+                        <Pressable
+                            style={[styles.button]}
+                            onPress={() => onCellClick(row, column)}>
+                            <Text
+                                style={{
+                                    fontSize: 24,
+                                    alignContent: 'center',
+                                    alignItems: 'center',
+                                    textAlign: 'center',
+                                    verticalAlign: 'center',
+                                    lineHeight: 24,
                                     color:
-                                        cellContent === 'o'
-                                            ? colors.playerO
-                                            : colors.playerX,
-                                },
-                            ]}>
-                            {cellContent}
-                        </Text>
-                    </TouchableHighlight>,
+                                        grid[column][row] === 'o'
+                                            ? 'blue'
+                                            : grid[column][row] === 'x'
+                                            ? 'red'
+                                            : 'black',
+                                }}>
+                                {grid[column][row]}
+                            </Text>
+                        </Pressable>
+                    </Animated.View>,
                 )
             }
         }
-        return touchableCells
-    }
-
-    const getCellStyle = (
-        row: number,
-        column: number,
-        rows: number,
-        columns: number,
-    ): ViewStyle => {
-        const cellWidthPercentage = 100 / columns
-        const cellHeightPercentage = 100 / rows
-
-        return {
-            position: 'absolute',
-            top: (row * cellHeightPercentage + '%') as DimensionValue,
-            left: (column * cellWidthPercentage + '%') as DimensionValue,
-            width: (cellWidthPercentage + '%') as DimensionValue,
-            height: (cellHeightPercentage + '%') as DimensionValue,
-        }
+        return cells
     }
 
     return (
-        <View style={styles.gridContainer}>
-            <Canvas
-                ref={canvasRef}
-                style={{
-                    width: GAME_WIDTH,
-                    height: GAME_HEIGHT,
-                    backgroundColor: colors.gameBackground,
-                }}
-            />
-            {renderTouchableCells()}
-        </View>
+        <GestureHandlerRootView style={{flex: 1}}>
+            <GestureDetector
+                gesture={Gesture.Simultaneous(panGesture, pinchGesture)}>
+                <Animated.View style={[styles.gridContainer, animatedStyle]}>
+                    {renderCells()}
+                </Animated.View>
+            </GestureDetector>
+        </GestureHandlerRootView>
     )
 }
 
 const styles = StyleSheet.create({
     gridContainer: {
-        display: 'flex',
-        margin: GAME_PADDING,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: 2,
+        width: GAME_WIDTH,
+        height: GAME_HEIGHT,
     },
-    cell: {
-        display: 'flex',
-        backgroundColor: 'transparent',
+    button: {
+        width: CELL_WIDTH,
+        height: CELL_HEIGHT,
+        backgroundColor: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderColor: 'black',
+        borderRadius: 0,
+        margin: 0,
+        padding: 0,
+        color: 'blue',
         textAlign: 'center',
-        textAlignVertical: 'center',
-        fontSize: Math.ceil(CELL_WIDTH * 0.75),
-        lineHeight: CELL_WIDTH - 4,
     },
 })
 

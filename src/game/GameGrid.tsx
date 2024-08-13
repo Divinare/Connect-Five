@@ -10,15 +10,9 @@ import Animated, {
     useAnimatedStyle,
     useSharedValue,
 } from 'react-native-reanimated'
-import {
-    CELL_HEIGHT,
-    CELL_WIDTH,
-    COLUMNS,
-    GAME_HEIGHT,
-    GAME_WIDTH,
-    ROWS,
-} from './constants.ts'
-import {Pressable, StyleSheet, Text} from 'react-native'
+import {CELL_HEIGHT, CELL_WIDTH} from './constants.ts'
+import {Pressable, StyleSheet, Text, View} from 'react-native'
+import {Coordinate} from './types/Coordinate.ts'
 
 interface Props {
     grid: string[][]
@@ -26,7 +20,11 @@ interface Props {
     gameEndResult: GameEndResult | null
 }
 
-const GameGrid: React.FC<Props> = ({grid, onCellClick}: Props) => {
+const GameGrid: React.FC<Props> = ({
+    grid,
+    onCellClick,
+    gameEndResult,
+}: Props) => {
     const scale = useSharedValue(1)
     const translateX = useSharedValue(0)
     const translateY = useSharedValue(0)
@@ -63,37 +61,48 @@ const GameGrid: React.FC<Props> = ({grid, onCellClick}: Props) => {
     })
 
     const renderCells = () => {
-        const cells = []
-        for (let row = 0; row < ROWS; row++) {
-            for (let column = 0; column < COLUMNS; column++) {
-                cells.push(
-                    <Animated.View key={`${row}-${column}`}>
-                        <Pressable
-                            style={[styles.button]}
-                            onPress={() => onCellClick(row, column)}>
-                            <Text
-                                style={{
-                                    fontSize: 24,
-                                    alignContent: 'center',
-                                    alignItems: 'center',
-                                    textAlign: 'center',
-                                    verticalAlign: 'center',
-                                    lineHeight: 24,
-                                    color:
-                                        grid[column][row] === 'o'
-                                            ? 'blue'
-                                            : grid[column][row] === 'x'
-                                            ? 'red'
-                                            : 'black',
-                                }}>
-                                {grid[column][row]}
-                            </Text>
-                        </Pressable>
-                    </Animated.View>,
-                )
-            }
-        }
-        return cells
+        return grid.map((rows, rowIndex: number) => {
+            return (
+                <View style={[styles.buttonRow]} key={rowIndex}>
+                    {rows.map((cell: string, colIndex: number) => {
+                        const isWinningCell =
+                            gameEndResult?.winningStreak?.find(
+                                (coordinate: Coordinate) =>
+                                    coordinate.y === rowIndex &&
+                                    coordinate.x === colIndex,
+                            )
+                        const backgroundColor = isWinningCell
+                            ? gameEndResult?.winner === 'o'
+                                ? 'blue'
+                                : 'red'
+                            : 'white'
+                        const fontColor = isWinningCell
+                            ? 'white'
+                            : cell === 'o'
+                            ? 'blue'
+                            : 'red'
+                        return (
+                            <Pressable
+                                key={colIndex}
+                                style={[styles.button, {backgroundColor}]}
+                                onPress={() => onCellClick(colIndex, rowIndex)}>
+                                <Text
+                                    style={{
+                                        fontSize: 24,
+                                        alignContent: 'center',
+                                        alignItems: 'center',
+                                        textAlign: 'center',
+                                        lineHeight: 24,
+                                        color: fontColor,
+                                    }}>
+                                    {cell}
+                                </Text>
+                            </Pressable>
+                        )
+                    })}
+                </View>
+            )
+        })
     }
 
     return (
@@ -109,12 +118,10 @@ const GameGrid: React.FC<Props> = ({grid, onCellClick}: Props) => {
 }
 
 const styles = StyleSheet.create({
-    gridContainer: {
+    gridContainer: {},
+    buttonRow: {
+        display: 'flex',
         flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 2,
-        width: GAME_WIDTH,
-        height: GAME_HEIGHT,
     },
     button: {
         width: CELL_WIDTH,
@@ -123,6 +130,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderColor: 'black',
+        borderWidth: 1,
         borderRadius: 0,
         margin: 0,
         padding: 0,

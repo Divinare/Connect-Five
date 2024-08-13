@@ -2,6 +2,7 @@ import {GameEndResult} from './types/GameEndResult.ts'
 import {GameState} from './types/GameState.ts'
 import {Player} from './GameScreen.tsx'
 import {useEffect, useState} from 'react'
+import {Coordinate} from './types/Coordinate.ts'
 
 /**
  *
@@ -26,133 +27,161 @@ const getGameEndResult = (gameState: GameState): GameEndResult | null => {
         return null
     }
 
-    const left = getCount(
+    const leftCoordinates = getCount(
         grid,
         lastMove.player,
         lastMove.coordinates.y,
         lastMove.coordinates.x,
         0,
         -1,
-        0,
+        [],
     )
-    const right = getCount(
+    const rightCoordinates = getCount(
         grid,
         lastMove.player,
         lastMove.coordinates.y,
         lastMove.coordinates.x,
         0,
         1,
-        0,
+        [],
     )
-    if (left + right >= 4) {
+    if (leftCoordinates.length + rightCoordinates.length >= 4) {
         return {
             winner: lastMove.player,
             start: {
-                x: lastMove.coordinates.x - left,
+                x: lastMove.coordinates.x - leftCoordinates.length,
                 y: lastMove.coordinates.y,
             },
             end: {
-                x: lastMove.coordinates.x + right,
+                x: lastMove.coordinates.x + rightCoordinates.length,
                 y: lastMove.coordinates.y,
             },
+            winningStreak: [
+                ...leftCoordinates.concat(rightCoordinates),
+                {
+                    y: lastMove.coordinates.y,
+                    x: lastMove.coordinates.x,
+                },
+            ],
         }
     }
 
-    const top = getCount(
+    const topCoordinates = getCount(
         grid,
         lastMove.player,
         lastMove.coordinates.y,
         lastMove.coordinates.x,
         -1,
         0,
-        0,
+        [],
     )
-    const down = getCount(
+    const downCoordinates = getCount(
         grid,
         lastMove.player,
         lastMove.coordinates.y,
         lastMove.coordinates.x,
         1,
         0,
-        0,
+        [],
     )
-    if (top + down >= 4) {
+    if (topCoordinates.length + downCoordinates.length >= 4) {
         return {
             winner: lastMove.player,
             start: {
                 x: lastMove.coordinates.x,
-                y: lastMove.coordinates.y - top,
+                y: lastMove.coordinates.y - topCoordinates.length,
             },
             end: {
                 x: lastMove.coordinates.x,
-                y: lastMove.coordinates.y + down,
+                y: lastMove.coordinates.y + downCoordinates.length,
             },
+            winningStreak: [
+                ...topCoordinates.concat(downCoordinates),
+                {
+                    y: lastMove.coordinates.y,
+                    x: lastMove.coordinates.x,
+                },
+            ],
         }
     }
 
-    const topLeft = getCount(
+    const topLeftCoordinates = getCount(
         grid,
         lastMove.player,
         lastMove.coordinates.y,
         lastMove.coordinates.x,
         -1,
         -1,
-        0,
+        [],
     )
-    const bottomRight = getCount(
+    const bottomRightCoordinates = getCount(
         grid,
         lastMove.player,
         lastMove.coordinates.y,
         lastMove.coordinates.x,
         1,
         1,
-        0,
+        [],
     )
 
-    if (topLeft + bottomRight >= 4) {
+    if (topLeftCoordinates.length + bottomRightCoordinates.length >= 4) {
         return {
             winner: lastMove.player,
             start: {
-                x: lastMove.coordinates.x - topLeft,
-                y: lastMove.coordinates.y - topLeft,
+                x: lastMove.coordinates.x - topLeftCoordinates.length,
+                y: lastMove.coordinates.y - topLeftCoordinates.length,
             },
             end: {
-                x: lastMove.coordinates.x + bottomRight,
-                y: lastMove.coordinates.y + bottomRight,
+                x: lastMove.coordinates.x + bottomRightCoordinates.length,
+                y: lastMove.coordinates.y + bottomRightCoordinates.length,
             },
+            winningStreak: [
+                ...topLeftCoordinates.concat(bottomRightCoordinates),
+                {
+                    y: lastMove.coordinates.y,
+                    x: lastMove.coordinates.x,
+                },
+            ],
         }
     }
 
-    const topRight = getCount(
+    const topRightCoordinates = getCount(
         grid,
         lastMove.player,
         lastMove.coordinates.y,
         lastMove.coordinates.x,
         -1,
         1,
-        0,
+        [],
     )
-    const bottomLeft = getCount(
+    const bottomLeftCoordinates = getCount(
         grid,
         lastMove.player,
         lastMove.coordinates.y,
         lastMove.coordinates.x,
         1,
         -1,
-        0,
+        [],
     )
 
-    if (topRight + bottomLeft >= 4) {
+    if (topRightCoordinates.length + bottomLeftCoordinates.length >= 4) {
         return {
             winner: lastMove.player,
             start: {
-                x: lastMove.coordinates.x + topRight,
-                y: lastMove.coordinates.y - topRight,
+                x: lastMove.coordinates.x + topRightCoordinates.length,
+                y: lastMove.coordinates.y - topRightCoordinates.length,
             },
             end: {
-                x: lastMove.coordinates.x - bottomLeft,
-                y: lastMove.coordinates.y + bottomLeft,
+                x: lastMove.coordinates.x - bottomLeftCoordinates.length,
+                y: lastMove.coordinates.y + bottomLeftCoordinates.length,
             },
+            winningStreak: [
+                ...topRightCoordinates.concat(bottomLeftCoordinates),
+                {
+                    y: lastMove.coordinates.y,
+                    x: lastMove.coordinates.x,
+                },
+            ],
         }
     }
 
@@ -166,16 +195,17 @@ const getCount = (
     column: number,
     nextRow: number,
     nextColumn: number,
-    count: number,
-): number => {
+    coordinates: Coordinate[],
+): Coordinate[] => {
     const currentRow = row + nextRow
     const currentColumn = column + nextColumn
     if (isOutsideGrid(grid, currentRow, currentColumn)) {
-        return count
+        return coordinates
     }
     if (grid[currentRow][currentColumn] !== turn) {
-        return count
+        return coordinates
     }
+
     return getCount(
         grid,
         turn,
@@ -183,7 +213,13 @@ const getCount = (
         currentColumn,
         nextRow,
         nextColumn,
-        count + 1,
+        [
+            ...coordinates,
+            {
+                x: currentColumn,
+                y: currentRow,
+            },
+        ],
     )
 }
 

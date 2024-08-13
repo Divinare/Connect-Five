@@ -65,7 +65,6 @@ const GameScreen = (): React.JSX.Element => {
     }
 
     const undoMove = () => {
-        console.log('at undo move!')
         if (moveHistory.length > 0) {
             const previousMove = moveHistory[moveHistory.length - 1]
 

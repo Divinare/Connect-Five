@@ -1,7 +1,7 @@
 import {Dimensions} from 'react-native'
 
-const ROWS = 25
-const COLUMNS = 25
+const ROWS = 30
+const COLUMNS = 20
 const SCREEN_WIDTH = Dimensions.get('window').width
 const CELL_WIDTH = SCREEN_WIDTH / 12
 const CELL_HEIGHT = CELL_WIDTH

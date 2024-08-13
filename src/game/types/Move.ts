@@ -1,7 +1,7 @@
 import {Player} from '../GameScreen.tsx'
-import {Coordinates} from './Coordinates.ts'
+import {Coordinate} from './Coordinate.ts'
 
 export type Move = {
     player: Player
-    coordinates: Coordinates
+    coordinates: Coordinate
 }

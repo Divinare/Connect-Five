@@ -1,8 +1,9 @@
 import {Player} from '../GameScreen.tsx'
-import {Coordinates} from './Coordinates.ts'
+import {Coordinate} from './Coordinate.ts'
 
 export type GameEndResult = {
     winner: Player
-    start: Coordinates
-    end: Coordinates
+    start: Coordinate
+    end: Coordinate
+    winningStreak: Coordinate[]
 }

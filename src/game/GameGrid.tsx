@@ -71,30 +71,21 @@ const GameGrid: React.FC<Props> = ({
                                     coordinate.y === rowIndex &&
                                     coordinate.x === colIndex,
                             )
+                        const playerColor = cell === 'o' ? 'blue' : 'red'
                         const backgroundColor = isWinningCell
-                            ? gameEndResult?.winner === 'o'
-                                ? 'blue'
-                                : 'red'
+                            ? playerColor
                             : 'white'
-                        const fontColor = isWinningCell
-                            ? 'white'
-                            : cell === 'o'
-                            ? 'blue'
-                            : 'red'
+                        const fontColor = isWinningCell ? 'white' : playerColor
                         return (
                             <Pressable
                                 key={colIndex}
                                 style={[styles.button, {backgroundColor}]}
                                 onPress={() => onCellClick(colIndex, rowIndex)}>
                                 <Text
-                                    style={{
-                                        fontSize: 24,
-                                        alignContent: 'center',
-                                        alignItems: 'center',
-                                        textAlign: 'center',
-                                        lineHeight: 24,
-                                        color: fontColor,
-                                    }}>
+                                    style={[
+                                        styles.buttonText,
+                                        {color: fontColor},
+                                    ]}>
                                     {cell}
                                 </Text>
                             </Pressable>
@@ -136,6 +127,13 @@ const styles = StyleSheet.create({
         padding: 0,
         color: 'blue',
         textAlign: 'center',
+    },
+    buttonText: {
+        fontSize: 24,
+        alignContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+        lineHeight: 24,
     },
 })
 

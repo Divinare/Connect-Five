@@ -39,8 +39,6 @@ yarn ios
 
 If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
-
 ## Debug the project
 
 ```
@@ -71,7 +69,7 @@ This command will generate an .aab file in the android/app/build/outputs/bundle/
 
 Cd into a dir where you put bundletools .jar package
 ```
-cd C:\Master Clone\Coding\tools
+cd <bundletools .jar package path>
 ```
 
 Build .apks from .aab

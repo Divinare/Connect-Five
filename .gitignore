@@ -69,4 +69,4 @@ yarn-error.log
 
 /android/keystore.properties
 
-tictactoe-release-key.keystore
+connectfive-release-key.keystore

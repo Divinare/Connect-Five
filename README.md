@@ -1,4 +1,4 @@
-# Tictactoe | React Native project
+# Connect Five | React Native project
 
 ## Prerequisites
 

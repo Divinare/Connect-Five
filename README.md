@@ -1,5 +1,10 @@
 # Connect Five | React Native project
 
+<p>
+  <img src="./images/connect_five_1.png" alt="Foo 1" width="30%" style="margin-right: 20px; max-width: 250px;" />
+  <img src="./images/connect_five_2.png" alt="Foo 2" width="30%" style="max-width: 250px;" />
+</p>
+
 ## Prerequisites
 
 Install React Native dependencies on your machine, check docs from: https://reactnative.dev/docs/environment-setup
